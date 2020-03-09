@@ -1,0 +1,12 @@
+[Unit]
+Description=Lock screen on sleep
+Before=sleep.target
+
+[Service]
+User=neil
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/sxlock -f "-* vera sans-*-r-*"
+
+[Install]
+WantedBy=sleep.target
+

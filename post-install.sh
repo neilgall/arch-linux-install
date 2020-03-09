@@ -1,58 +1,64 @@
-# Update system
-pacman --noconfirm -Syu
+#!/bin/bash
+# Run as non-root user
 
-# Install yay
-mkdir /tmp/aur && cd /tmp/aur
-git clone https://aur.archlinux.org/yay.git
-cd yay
-cat PKGBUILD
-makepkg -si
+PACMAN="sudo pacman --noconfirm"
+SYSTEMCTL="sudo systemctl"
+
+# Update system
+$PACMAN -Syu
 
 # Install generic packages
-pacman --noconfirm -S bash-completion lsof pacman --noconfirm-contrib htop
+$PACMAN -S bash-completion lsof $PACMAN-contrib htop man
 
 # Install compression tools
-pacman --noconfirm -S zip unzip unrar
+$PACMAN -S zip unzip unrar
 
 # Install network tools
-pacman --noconfirm -S rsync traceroute bind-tools speedtest-cli openssh openvpn macchanger
+$PACMAN -S rsync traceroute bind-tools speedtest-cli openssh openvpn macchanger
 
 # Install services
-pacman --noconfirm -S networkmanager xdg-user-dirs networkmanager-openvpn
+$PACMAN -S networkmanager xdg-user-dirs networkmanager-openvpn
 
 # Enable NetworkManager and disable dhcpcd at boot
-systemctl enable NetworkManager
-systemctl disable dhcpcd
+$SYSTEMCTL enable NetworkManager
+$SYSTEMCTL disable dhcpcd
 
 # Create default directories
-xdg-user-dirs-update
+sudo xdg-user-dirs-update
 
 # Install File system tools
-pacman --noconfirm -S dosfstools ntfs-3g exfat-utils
+$PACMAN -S dosfstools ntfs-3g exfat-utils
 
 # Install sound utilities
-pacman --noconfirm -S alsa-utils alsa-plugins pulseaudio pulseaudio-alsa
+$PACMAN -S alsa-utils alsa-plugins pulseaudio pulseaudio-alsa
 
 # Install xorg
-pacman --noconfirm -S xorg-server xorg-xinit
+$PACMAN -S xorg-server xorg-xinit
 
 # Install xorg default fonts
-pacman --noconfirm -S font-bh-ttf font-bitstream-speedo gsfonts sdl_ttf ttf-bitstream-vera ttf-dejavu ttf-liberation xorg-fonts-type1
+$PACMAN -S font-bh-ttf font-bitstream-speedo gsfonts sdl_ttf ttf-bitstream-vera ttf-dejavu ttf-liberation xorg-fonts-type1
 
 # Install video driver
 lspci | grep -e VGA -e 3D
-pacman --noconfirm -Ssq xf86-video
-pacman --noconfirm -S xf86-video-intel
+$PACMAN -Ssq xf86-video
+$PACMAN -S xf86-video-intel
 
 # Install printer config
-pacman --noconfirm -S system-config-printer cups
-systemctl enable org.cups.cupsd.service
+$PACMAN -S system-config-printer cups
+$SYSTEMCTL enable org.cups.cupsd.service
 
 # Install desktop environment
-pacman --noconfirm -S gnome gnome-terminal pamac-manager
+$PACMAN -S gnome gnome-terminal pamac-manager
 
 # Install default display manager
-pacman --noconfirm -S lightdm-gtk-greeter
+$PACMAN -S lightdm-gtk-greeter
+
+# Install yay
+pacman --nocpnfirm -S go
+mkdir /tmp/aur && cd /tmp/aur
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si
 
 # Install display manager and settings from AUR
 yay -S lightdm-slick-greeter
@@ -61,31 +67,33 @@ yay -S lightdm-settings
 # Edit /etc/lightdm/lightdm.conf, uncomment and change to
 greeter-session=lightdm-slick-greeter
 
-# Restart lightdm service
-systemctl restart lightdm.service
-
 # Enable lightdm greeter
-systemctl enable lightdm
+$SYSTEMCTL enable lightdm
+
+# Screen lock
+$PACMAN -S xorg-xfontsel xorg-xlsfonts xorg-fonts-misc
+yay -S sxlock-git
+cp -f sxlock.service /lib/systemd/system
+systemctl enable sxlock.service
 
 # Install themes
-pacman --noconfirm -S arc-icon-theme arc-gtk-theme papirus-icon-theme
+$PACMAN -S arc-icon-theme arc-gtk-theme papirus-icon-theme
 
 # Install password manager
-pacman --noconfirm -S snapd
-systemctl enable snapd
-systemctl start snapd
-snap install nordpass
+$PACMAN -S snapd
+$SYSTEMCTL enable snapd
+$SYSTEMCTL start snapd
+sudo snap install nordpass
 
 # Install dev tools
-pacman --noconfirm -S aws-cli python-pip nodejs npm
+$PACMAN -S aws-cli python-pip nodejs npm
 
 # Install other apps
-pacman --noconfirm -S chromium firefox transmission-gtk virtualbox gedit gedit-plugins vlc flameshot ffmpeg libreoffice-fresh gparted
+$PACMAN -S chromium firefox transmission-gtk gedit gedit-plugins vlc flameshot ffmpeg libreoffice-fresh gparted
 
 # Install other apps from AUR
 yay -S insomnia
-yay -S postman-bin
-yay -S pacman --noconfirm-cleanup-hook
+yay -S pacman-cleanup-hook
 yay -S zoom
 yay -S spotify
 yay -S station
