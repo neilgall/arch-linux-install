@@ -13,12 +13,13 @@ locale-gen
 echo 'FONT=latarcyrheb-sun32' > /etc/vconsole.conf
 
 # Set the hostname
-echo 'bawbags' > /etc/hostname
+HOSTNAME=bawbags
+echo $HOSTNAME > /etc/hostname
 
 # Update hosts file
 echo '127.0.0.1  localhost' >> /etc/hosts
 echo '::1        localhost' >> /etc/hosts
-echo '127.0.0.1  bawbags.localdomain bawbags' >> /etc/hosts
+echo "127.0.0.1  $HOSTNAME.localdomain $HOSTNAME" >> /etc/hosts
 
 # Root password
 echo "Set root password"

@@ -48,10 +48,11 @@ $PACMAN -S system-config-printer cups
 $SYSTEMCTL enable org.cups.cupsd.service
 
 # Install desktop environment
-$PACMAN -S gnome gnome-terminal pamac-manager
+$PACMAN -S gnome
+$PACMAN -S gnome-terminal chrome-gnome-shell
 
 # Install default display manager
-$PACMAN -S lightdm-gtk-greeter
+$PACMAN -S lightdm-gtk-greeter light-locker
 
 # Install yay
 pacman --nocpnfirm -S go
@@ -63,18 +64,13 @@ makepkg -si
 # Install display manager and settings from AUR
 yay -S lightdm-slick-greeter
 yay -S lightdm-settings
+yay -S plymouth
 
 # Edit /etc/lightdm/lightdm.conf, uncomment and change to
 greeter-session=lightdm-slick-greeter
 
 # Enable lightdm greeter
-$SYSTEMCTL enable lightdm
-
-# Screen lock
-$PACMAN -S xorg-xfontsel xorg-xlsfonts xorg-fonts-misc
-yay -S sxlock-git
-cp -f sxlock.service /lib/systemd/system
-systemctl enable sxlock.service
+$SYSTEMCTL enable lightdm-plymouth
 
 # Install themes
 $PACMAN -S arc-icon-theme arc-gtk-theme papirus-icon-theme
@@ -86,15 +82,18 @@ $SYSTEMCTL start snapd
 sudo snap install nordpass
 
 # Install dev tools
-$PACMAN -S aws-cli python-pip nodejs npm
+$PACMAN -S aws-cli python-pip nodejs npm docker docker-compose kubectl
+sudo pip install virtualenv
+sudo usermod -aG docker neil
 
 # Install other apps
 $PACMAN -S chromium firefox transmission-gtk gedit gedit-plugins vlc flameshot ffmpeg libreoffice-fresh gparted
 
 # Install other apps from AUR
 yay -S insomnia
+yay -S pamac-aur-git
 yay -S pacman-cleanup-hook
 yay -S zoom
-yay -S spotify
+yay -S spotify-dev
 yay -S station
 yay -S caffeine-ng
